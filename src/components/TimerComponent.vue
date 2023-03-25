@@ -51,8 +51,9 @@
 import { ref, computed } from 'vue';
 
 const startTime = ref(null);
+const pauseTime = ref(null);
 const currentTime = ref(null);
-const elapsedTime = ref(55000);
+const elapsedTime = ref(0);
 const timer = ref(null);
 const isRunning = ref(false);
 
@@ -82,21 +83,27 @@ function pad(value) {
 const toggleTimer = () => {
   if (!isRunning.value) {
     startTime.value = Date.now() - elapsedTime.value;
-    timer.value = setInterval(() => {
-      currentTime.value = Date.now();
-      elapsedTime.value = currentTime.value - startTime.value;
-    }, 10);
+    timer.value = requestAnimationFrame(updateTime);
     isRunning.value = true;
   } else {
-    clearInterval(timer.value);
+    cancelAnimationFrame(timer.value);
+    pauseTime.value = Date.now();
     isRunning.value = false;
   }
 };
 
 const resetTimer = () => {
-  clearInterval(timer.value);
+  cancelAnimationFrame(timer.value);
   elapsedTime.value = 0;
   isRunning.value = false;
+};
+
+const updateTime = () => {
+  currentTime.value = Date.now();
+  elapsedTime.value = isRunning.value
+    ? currentTime.value - startTime.value
+    : elapsedTime.value + currentTime.value - pauseTime.value;
+  timer.value = requestAnimationFrame(updateTime);
 };
 </script>
 
