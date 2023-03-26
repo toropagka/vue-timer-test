@@ -23,6 +23,8 @@ function addTimer() {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 50px;
+  align-items: center;
+  justify-content: center;
 }
 
 @media screen and (min-width: 768px) {
